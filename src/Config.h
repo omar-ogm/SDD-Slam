@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <string>
+#include "extra/log.h"
 
 namespace SD_SLAM {
 
@@ -123,6 +124,8 @@ class Config {
   static std::string CameraFrame() { return GetInstance().kCameraFrame_; }
   static bool UseImagesTimeStamps() { return GetInstance().kUseImagesTimeStamps_; }
 
+  static cv::Mat NoRGBTimeIntervals() { return GetInstance().noRGBTimeIntervals; }
+
  private:
   Config();
 
@@ -164,6 +167,12 @@ class Config {
   std::string kBaseFrame_;
   std::string kCameraFrame_;
   bool kUseImagesTimeStamps_;
+
+  /**
+  * A matrix of any rows (at least 1) and 2 columns. It can be seen as a set of pair of values where each pair,
+  * represents the timelapses in seconds where we want to have black images, simulating an environment without light
+  */
+  cv::Mat noRGBTimeIntervals;
 };
 
 }  // namespace SD_SLAM

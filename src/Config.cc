@@ -154,6 +154,8 @@ bool Config::ReadParameters(std::string filename) {
   if (fs["ROS.CameraFrame"].isNamed()) fs["ROS.CameraFrame"] >> kCameraFrame_;
   if (fs["ROS.UseImagesTimeStamps"].isNamed()) fs["ROS.UseImagesTimeStamps"] >> kUseImagesTimeStamps_;
 
+  if (fs["noRGBTimeIntervals"].isNamed()) fs["noRGBTimeIntervals"] >> noRGBTimeIntervals;
+
   fs.release();
 
   return true;

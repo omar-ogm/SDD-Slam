@@ -1,0 +1,76 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV)
+Camera.Width: 640
+Camera.Height: 480
+Camera.fx: 517.306408
+Camera.fy: 516.469215
+Camera.cx: 318.643040
+Camera.cy: 255.313989
+
+Camera.k1: 0.262383
+Camera.k2: -0.953104
+Camera.p1: -0.005358
+Camera.p2: 0.002628
+Camera.k3: 1.163314
+
+# IR projector baseline times fx (aprox.)
+Camera.bf: 40.0
+
+# Camera Field Of View (Needed by DIFODO)
+Camera.fovh_degrees: 74.0
+Camera.fovv_degrees: 62.0
+
+# Close/Far threshold. Baseline times.
+ThDepth: 40.0
+
+# Deptmap values factor
+DepthMapFactor: 1
+
+#--------------------------------------------------------------------------------------------
+# DIFODO Parameters
+#--------------------------------------------------------------------------------------------
+# To see more about these parameteres check https://roboticslaburjc.github.io/2019-tfm-omar-garrido/entries/entry7/
+
+# Depth filter. Only the depth pixel values between the min and max will be considered for
+# DIFODO algorithm.
+DIFODO.min_depth_value_filter: 0.5
+DIFODO.max_depth_value_filter: 4.5
+
+# The downsampling applied to the original image before using DIFODO algorithm.
+# Example: An image 640x480 will be 160x120 for DIFODO algorithm. DIFODO compute time is
+# based on the input image resolution. For real time (at least 30FPS) a resolution of 320x240
+# using ctf_levels = 5 will allow 30ms of computing time approx.
+DIFODO.downsample: 4
+# The number of pyramid levels (the more the best). From 3-5 there is almost no difference
+# on the estimation. Recommmended value is 5.
+DIFODO.ctf_levels: 5
+# 1 to use it, 0 to not use it
+DIFODO.fast_pyramid: 0
+
+
+#--------------------------------------------------------------------------------------------
+# ROS Parameters
+#--------------------------------------------------------------------------------------------
+ROS.CameraTopic: "/camera/rgb/image_color"
+ROS.DepthTopic: "/camera/depth/image"
+ROS.IMUTopic: "/imu_data"
+ROS.BaseFrame: "odom"
+ROS.CameraFrame: "camera_link"
+# 1 == true, 0 == false
+ROS.UseImagesTimeStamps: 1
+
+#--------------------------------------------------------------------------------------------
+# TUM experimental
+#--------------------------------------------------------------------------------------------
+# A matrix of any rows and 2 columns. Each pair of values from a row mean the starting second
+# and end second where the rgb images will go completely black (simulating an environment without light)
+noRGBTimeIntervals: !!opencv-matrix
+  rows: 3
+  cols: 2
+  dt: i
+  data: [ 1, 2, 4, 5, 7, 12 ]

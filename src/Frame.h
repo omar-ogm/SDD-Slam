@@ -31,6 +31,7 @@
 #include "MapPoint.h"
 #include "KeyFrame.h"
 #include "ORBextractor.h"
+#include "Config.h"
 
 namespace SD_SLAM {
 

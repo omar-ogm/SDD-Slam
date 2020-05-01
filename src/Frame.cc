@@ -72,6 +72,34 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, ORBextractor* extrac
   // Frame ID
   mnId = nNextId++;
 
+ // only on the TUM_experiments branch to do experimentation with synthetic data from TUM RGBD dataset.
+  bool use_black_image = false;
+  cv::Mat black_image;
+
+  cv::Mat NoRGBTimeIntervalsMat = Config::NoRGBTimeIntervals();
+  if (!NoRGBTimeIntervalsMat.empty()) {
+    int rows = NoRGBTimeIntervalsMat.rows;
+    int cols = NoRGBTimeIntervalsMat.cols;
+    if (cols == 2) {
+      for(int i = 0; i < rows; i++)
+      {
+        double startSec = (double)NoRGBTimeIntervalsMat.at<int>(i, 0);
+        double endSec = (double)NoRGBTimeIntervalsMat.at<int>(i, 1);
+        double currentTime = mnId / Config::fps();
+
+        if (startSec < currentTime && currentTime < endSec) {
+          // Paint it Black! Use a black image instead of the original frame
+          use_black_image = true;
+          black_image = cv::Mat::zeros(imGray.rows, imGray.cols, imGray.type());
+          break;
+        }
+      }
+    }
+    else {
+      LOGE("The columns of the noRGBTimeIntervals configuration values are not 2, please check it");
+    }
+  }
+
   mTcw.setZero();
 
   // Scale Level Info
@@ -84,10 +112,14 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, ORBextractor* extrac
   mvInvLevelSigma2 = mpORBextractorLeft->GetInverseScaleSigmaSquares();
 
   // ORB extraction
-  ExtractORB(imGray);
+  if (use_black_image) {
+    ExtractORB(black_image);
+  }
+  else {
+    ExtractORB(imGray);
+  }
 
   N = mvKeys.size();
-
   UndistortKeyPoints();
 
   ComputeStereoFromRGBD(imDepth);
@@ -98,7 +130,12 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, ORBextractor* extrac
 
   // This is done only for the first Frame
   if (mbInitialComputations) {
-    ComputeImageBounds(imGray);
+    if (use_black_image) {
+      ComputeImageBounds(black_image);
+    } else {
+      ComputeImageBounds(imGray);
+    }
+
 
     mfGridElementWidthInv = static_cast<float>(FRAME_GRID_COLS)/static_cast<float>(mnMaxX-mnMinX);
     mfGridElementHeightInv = static_cast<float>(FRAME_GRID_ROWS)/static_cast<float>(mnMaxY-mnMinY);
@@ -193,7 +230,7 @@ void Frame::ExtractORB(const cv::Mat &im) {
 }
 
 void Frame::SetPose(const Eigen::Matrix4d &Tcw) {
-  Eigen::Matrix4d m = Tcw;  // Somehow it fixes problems with Eigen
+  Eigen::Matrix4d m = Tcw;  // Somehow it fixes blems with Eigen
   mTcw = m;
   UpdatePoseMatrices();
 }
@@ -335,6 +372,9 @@ void Frame::UndistortKeyPoints() {
     return;
   }
 
+  if (N == 0) {
+    return;
+  }
   // Fill matrix with points
   cv::Mat mat(N, 2, CV_32F);
   for (int i = 0; i < N; i++) {
