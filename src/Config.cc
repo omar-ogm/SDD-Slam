@@ -79,7 +79,10 @@ Config::Config() {
 
   kBaseFrame_ = "odom";
   kCameraFrame_ = "camera_link";
+
+  // Experiments only flags
   kUseImagesTimeStamps_ = false;
+  useOriginalRGBDSLAM_ = false;
 }
 
 bool Config::ReadParameters(std::string filename) {
@@ -154,7 +157,8 @@ bool Config::ReadParameters(std::string filename) {
   if (fs["ROS.CameraFrame"].isNamed()) fs["ROS.CameraFrame"] >> kCameraFrame_;
   if (fs["ROS.UseImagesTimeStamps"].isNamed()) fs["ROS.UseImagesTimeStamps"] >> kUseImagesTimeStamps_;
 
-  if (fs["noRGBTimeIntervals"].isNamed()) fs["noRGBTimeIntervals"] >> noRGBTimeIntervals;
+  if (fs["Experiments.noRGBTimeIntervals"].isNamed()) fs["Experiments.noRGBTimeIntervals"] >> noRGBTimeIntervals;
+  if (fs["Experiments.UseOriginalRGBDSLAM"].isNamed()) fs["Experiments.UseOriginalRGBDSLAM"] >> useOriginalRGBDSLAM_;
 
   fs.release();
 

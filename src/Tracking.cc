@@ -163,8 +163,12 @@ Eigen::Matrix4d Tracking::GrabImageRGBD(const cv::Mat &im, const cv::Mat &imD, c
 
   mCurrentFrame = Frame(im, imDepth, mpORBextractorLeft, mK, mDistCoef, mbf, mThDepth);
 
-  // TODO: Create a configuration parameter to be able to change between the old SD-SLAM and the new if desired
-  TrackRGBD();
+  if (Config::UseOriginalRGBD()) {
+    Track();
+  } else {
+    TrackRGBD();
+  }
+
 
   return mCurrentFrame.GetPose();
 }

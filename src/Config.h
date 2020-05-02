@@ -125,6 +125,7 @@ class Config {
   static bool UseImagesTimeStamps() { return GetInstance().kUseImagesTimeStamps_; }
 
   static cv::Mat NoRGBTimeIntervals() { return GetInstance().noRGBTimeIntervals; }
+  static bool UseOriginalRGBD() { return GetInstance().useOriginalRGBDSLAM_; }
 
  private:
   Config();
@@ -173,6 +174,12 @@ class Config {
   * represents the timelapses in seconds where we want to have black images, simulating an environment without light
   */
   cv::Mat noRGBTimeIntervals;
+
+  /**
+   * When this value is set to true. The RGBD tracking is done without DIFODO. (only for experimental purposes)
+   */
+  bool useOriginalRGBDSLAM_;
+
 };
 
 }  // namespace SD_SLAM
