@@ -169,7 +169,6 @@ Eigen::Matrix4d Tracking::GrabImageRGBD(const cv::Mat &im, const cv::Mat &imD, c
     TrackRGBD();
   }
 
-
   return mCurrentFrame.GetPose();
 }
 
@@ -766,6 +765,12 @@ void Tracking::ReStereoInitialization() {
     // KF hijos seran los que se vayan creando...sino quizas si que pueda tener sentido ponerlo al haber pasado mucho
     // tiempo entre KeyFrames.
     //mpMap->mvpKeyFrameOrigins.push_back(pKFini);
+
+    // ReInitialize DIFODO. The next time that DIFODO is being used if not reinitialized, the first
+    // estimation will present a big jump. This avoids it.
+    mCvDifodo = CVDifodo();
+    mCvDifodo.loadConfiguration();
+    mCvDifodo.loadFrame(mCurrentFrame.mDepthImage);
 
     // Back to the ORB Tracking State
     mState = OK;
